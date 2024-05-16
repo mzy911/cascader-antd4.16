@@ -2,67 +2,74 @@
   "data": [
     {
       "label": "金融",
-      "value": "金融",
-      "checked": true,
+      "value": "jinrong",
       "children": [
         {
           "label": "金融1",
-          "value": "金融1",
-          "checked": true,
+          "value": "jinrong1",
           "children": [
             {
               "label": "金融11",
-              "value": "金融11",
-              "checked": true,
+              "value": "jinrong11",
               "children": []
             },
             {
               "label": "金融12",
-              "value": "金融12",
-              "checked": true,
+              "value": "jinrong12",
               "children": []
             }
           ]
         },
         {
           "label": "金融2",
-          "value": "金融2",
-          "checked": true,
+          "value": "jinrong2",
           "children": []
         }
       ]
     },
+    
     {
       "label": "生活",
-      "value": "生活",
-      "checked": true,
+      "value": "shenghuo",
       "children": [
         {
           "label": "生活1",
-          "value": "生活1",
-          "checked": true,
+          "value": "shenghuo1",
           "children": [
             {
               "label": "生活11",
-              "value": "生活11",
-              "checked": true,
+              "value": "shenghuo11",
               "children": []
             },
             {
               "label": "生活12",
-              "value": "生活12",
-              "checked": true,
+              "value": "shenghuo12",
               "children": []
             }
           ]
         },
         {
           "label": "生活2",
-          "value": "生活2",
-          "checked": true,
+          "value": "shenghuo2",
           "children": []
         }
       ]
+    },
+    {
+      "label": "生活a",
+      "value": "shenghuoa"
+    },
+    {
+      "label": "生活b",
+      "value": "shenghuob"
+    },
+    {
+      "label": "生活c",
+      "value": "shenghuoc"
+    },
+    {
+      "label": "生活d",
+      "value": "shenghuod"
     }
   ]
 }

@@ -1,71 +1,83 @@
+import React, { useEffect, useState } from "react";
 import { Checkbox } from "antd";
-import React from "react";
-import { findActivePaths, addId, setActivce } from "../utils.js";
+import {
+  findActivePaths,
+  addId,
+  setActivce,
+  setChecked,
+  setDisabled,
+} from "../utils.js";
 import "./SelectTree.less";
 
-// json数组 获取数据的层级
-// function getDeepestLevel(jsonArray) {
-//   let maxDepth = 0;
-//   jsonArray.forEach(function(item) {
-//     let depth = 1;
-//     let children = item.children;
-//     while (children && children.length) {
-//       depth++;
-//       children = children.reduce((acc, child) => acc.concat(child.children || []), []);
-//     }
-//     maxDepth = Math.max(maxDepth, depth);
-//   });
-//   return maxDepth;
-// }
-
-function getDeepestLevel(node) {
-  if (!node.children || node.children.length === 0) {
-    // 如果没有子节点，则返回当前层级
-    return 0;
-  }
-
-  // 获取子节点中最深的层级
-  const childLevels = node.children.map(getDeepestLevel);
-
-  // 返回最大的子节点层级加1（因为自己是一层）
-  return Math.max(...childLevels) + 1;
-}
-
 const SelectTree = ({ data, checked, setSeleced }) => {
-  // 给 data 添加 id
-  const idData = addId(data, "abcd");
+  const [activeId, setActivceId] = useState("abcd000");
 
-  // 根据指定 ID 返回激活的 "路径"
-  const acticePaths = findActivePaths(idData, "id", "abcd000");
+  // 初始化数据时，给每一项增加 id
+  const [renderData, setRenderData] = useState(addId(data, "abcd"));
+  const [acticePaths, setActicePaths] = useState([]);
 
-  // 给 data 设置 active
-  const activeData = setActivce(idData, acticePaths);
-  const len = activeData.len - 1;
+  // console.log('renderData',renderData);
 
   const renderTree = (index) => {
-    // console.log("index", index);
     let deep = index;
     let indexId = 0;
-    let id = "";
-    let data = JSON.parse(JSON.stringify(activeData));
+    let id = acticePaths[0];
+    let disabledData = setDisabled(renderData);
+    let data = JSON.parse(JSON.stringify(disabledData));
 
-    do {
-      id = acticePaths[indexId];
-      console.log("id", deep);
+    while (deep > 0) {
+      const preId = acticePaths[indexId];
+      const preData = data.find((item) => item.id === preId);
+      indexId++;
+      const nextId = acticePaths[indexId];
+      data = preData.children;
+      id = nextId;
+      deep--;
+    }
 
-      // const itemData = data.find((item) => item.id === id);
-      // data = itemData?.children || [];
-      deep = deep - 1;
-      indexId = indexId + 1;
-    } while (deep > 0 && index < len);
+    const checkBoxChange =
+      (id, checked = false) =>
+      () => {
+        setRenderData(setChecked(renderData, id, !checked));
+        setActivceId(id);
+      };
+
+    const checkBoxClick = (id) => () => {
+      setActivceId(id);
+    };
 
     return (
-      <div className={"select-wrap"} key={"select-wrap" + id}>
-        111111
-        {/* {renderTree(index, id, item.children)} */}
+      <div className={"select-container"} key={"select-container" + id}>
+        {data.map((item) => {
+          return (
+            <div
+              className={item.active ? "select-item active" : "select-item"}
+              key={"select-item" + item.id}
+              onClick={checkBoxClick(item.id)}
+            >
+              <Checkbox
+                defaultChecked={item.checked}
+                onChange={checkBoxChange(item.id, item.checked)}
+                disabled={item.disabled}
+              >
+                {item.label}
+              </Checkbox>
+              {/* <Icon type="right" /> */}
+            </div>
+          );
+        })}
       </div>
     );
   };
+
+  useEffect(() => {
+    setActicePaths(findActivePaths(renderData, "id", activeId));
+  }, [activeId]);
+
+  useEffect(() => {
+    // 给 data 设置 active
+    setRenderData(setActivce(renderData, acticePaths));
+  }, [acticePaths]);
 
   return (
     <div className="select-tree">

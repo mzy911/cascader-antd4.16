@@ -1,12 +1,27 @@
 .select-tree {
   overflow: visible;
 
-  .select-wrap {
+  .select-container {
     float: left;
     width: 200px;
-    padding: 15px;
     height: 300px;
-    overflow-y: auto;
+    overflow-y: scroll;
     border: 1px solid #ddd;
+
+    .select-item {
+      padding: 6px 15px;
+
+      // .ant-checkbox-wrapper {
+      //   width: 100%;
+      // }
+    }
+
+    .select-item.active {
+      background-color: rgb(204, 217, 241);
+    }
+
+    .select-item:hover {
+      background-color: rgb(220, 225, 234);
+    }
   }
 }

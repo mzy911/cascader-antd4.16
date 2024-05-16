@@ -72,7 +72,7 @@ export function setChecked(data, id, val) {
       }
     }
   }
-  find(newData) || [];
+  find(newData);
 
   return newData;
 }
@@ -95,7 +95,7 @@ export function setDisabled(data, father) {
       }
     }
   }
-  find(newData, null) || [];
+  find(newData, null) ;
 
   return newData;
 }

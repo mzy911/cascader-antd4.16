@@ -1,66 +1,69 @@
 import React, { useEffect, useState } from "react";
 import { Checkbox } from "antd";
 import {
-  findActivePaths,
-  addId,
+  showNextLevel,
   setActivce,
   setChecked,
   setDisabled,
 } from "../utils.js";
 import "./SelectTree.less";
 
-const SelectTree = ({ data, checked, setSeleced }) => {
-  const [activeId, setActivceId] = useState("abcd000");
+const SelectTree = ({ data, value, onChange }) => {
+  const [activeId, setActivceId] = useState();
+  const [dealData, setDealData] = useState([]);
 
-  // 初始化数据时，给每一项增加 id
-  const [renderData, setRenderData] = useState(addId(data, "abcd"));
+
+
+  const [renderData, setRenderData] = useState(setChecked(data, value));
   const [acticePaths, setActicePaths] = useState([]);
 
+
+
+  // console.log("setChecked(data, value)", setChecked(data, value));
+
   // console.log('renderData',renderData);
+  const renderTree = (itemData, index) => {
+    // let deep = index;
+    // let indexId = 0;
+    let id = acticePaths[0] + Date.now() + index;
+    // let disabledData = setDisabled(renderData);
+    // let data = JSON.parse(JSON.stringify(disabledData));
 
-  const renderTree = (index) => {
-    let deep = index;
-    let indexId = 0;
-    let id = acticePaths[0];
-    let disabledData = setDisabled(renderData);
-    let data = JSON.parse(JSON.stringify(disabledData));
+    // // while (deep > 0) {
+    // //   const preId = acticePaths[indexId];
+    // //   const preData = data.find((item) => item.id === preId);
+    // //   indexId++;
+    // //   const nextId = acticePaths[indexId];
+    // //   data = preData.children;
+    // //   id = nextId;
+    // //   deep--;
+    // // }
 
-    while (deep > 0) {
-      const preId = acticePaths[indexId];
-      const preData = data.find((item) => item.id === preId);
-      indexId++;
-      const nextId = acticePaths[indexId];
-      data = preData.children;
-      id = nextId;
-      deep--;
-    }
-
-    const checkBoxChange =
-      (id, checked = false) =>
-      () => {
-        setRenderData(setChecked(renderData, id, !checked));
+    const checkBoxClick = (id) => (e) => {
+      if (e.target.nodeName === "INPUT") {
+        // 点击勾选按钮：勾选、取消
+        if (value.includes(id)) {
+          onChange(value.filter((val) => val !== id));
+        } else {
+          onChange([...value, id]);
+        }
+      } else {
+        // 点击 lable、空白处 展开下级
         setActivceId(id);
-      };
-
-    const checkBoxClick = (id) => () => {
-      setActivceId(id);
+      }
     };
 
     return (
       <div className={"select-container"} key={"select-container" + id}>
-        {data.map((item) => {
+        {itemData.map((item) => {
           return (
             <div
               className={item.active ? "select-item active" : "select-item"}
               key={"select-item" + item.id}
               onClick={checkBoxClick(item.id)}
             >
-              <Checkbox
-                defaultChecked={item.checked}
-                onChange={checkBoxChange(item.id, item.checked)}
-                disabled={item.disabled}
-              >
-                {item.label}
+              <Checkbox defaultChecked={item.checked} disabled={item.disabled}>
+                <div className={"oopooow"}>{item.label}</div>
               </Checkbox>
               {/* <Icon type="right" /> */}
             </div>
@@ -71,19 +74,21 @@ const SelectTree = ({ data, checked, setSeleced }) => {
   };
 
   useEffect(() => {
-    setActicePaths(findActivePaths(renderData, "id", activeId));
-  }, [activeId]);
+    const aa = showNextLevel(renderData, "id", activeId);
+    setActicePaths(aa);
+  }, [activeId, renderData]);
 
   useEffect(() => {
-    // 给 data 设置 active
-    setRenderData(setActivce(renderData, acticePaths));
-  }, [acticePaths]);
+    setRenderData(setChecked(data, value))
+  }, [value]);
 
   return (
     <div className="select-tree">
-      {acticePaths.map((_item, index) => {
-        return renderTree(index);
-      })}
+      {
+        acticePaths.map((item, index) => {
+          return renderTree(item, index);
+        })
+      }
     </div>
   );
 };

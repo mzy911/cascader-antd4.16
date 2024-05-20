@@ -10,10 +10,17 @@
 
     .select-item {
       padding: 6px 15px;
+      position: relative;
+    }
 
-      // .ant-checkbox-wrapper {
-      //   width: 100%;
-      // }
+    .select-item::before {
+      content: ' ';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 32px;
+      right: 0;
+      z-index: 999;
     }
 
     .select-item.active {

@@ -1,33 +1,33 @@
-// 点击事件处理函数
-export function findActivePaths(data, key = "id", activeId) {
-  function find(nodes, isFind) {
+// 显示下一级
+export function showNextLevel(data, key = "id", activeId) {
+  let newData = JSON.parse(JSON.stringify(data));
+
+  let arr = [];
+  function find(nodes, deep) {
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i];
-      if (isFind && i === 0) {
+
+      if (node[key] === activeId) {
         if (node?.children?.length > 0) {
-          const res = find(node.children, isFind) || [];
-          return [node[key], ...res];
-        } else {
-          return [node[key]];
+          arr = [...arr, node.children];
         }
-      } else if (!isFind && node[key] === activeId) {
-        if (node?.children?.length > 0) {
-          const res = find(node.children, true) || [];
-          return [activeId, ...res];
-        } else {
-          return [activeId];
-        }
+        return true;
       } else if (node?.children?.length > 0) {
-        const res = find(node.children, isFind) || [];
-        if (res.length > 0) {
-          return [node[key], ...res];
+        const res = find(node.children, deep + 1);
+        if (res) {
+          arr = [node.children, ...arr];
+          return true;
         }
       }
     }
   }
 
-  return find(data, false) || [];
+  find(newData, 0);
+  arr = [newData, ...arr];
+
+  return arr;
 }
+
 
 // 元素添加 id
 export function addId(data, id = "0") {
@@ -58,17 +58,19 @@ export function setActivce(data, arr = []) {
 }
 
 // 设置 checked 状态
-export function setChecked(data, id, val) {
+export function setChecked(data, ids) {
   const newData = JSON.parse(JSON.stringify(data));
-  // 父节点取消勾选，子节点也要取消
-  function find(nodes, cancel) {
+  function find(nodes, parent, parentChecked) {
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i];
-      if (node.id === id) {
-        node.checked = cancel ? false : val;
-        return;
-      } else if (node?.children?.length > 0) {
-        find(node.children, cancel || node.checked);
+      if (ids.includes(node.id)) {
+        node.checked = (parent && !parentChecked) ? false: true;
+      } else {
+        node.checked = false;
+      }
+      node.disabled = (parent && !parent.checked) ? true : false;
+      if (node?.children?.length > 0) {
+        find(node.children, node, node.checked);
       }
     }
   }
@@ -95,7 +97,7 @@ export function setDisabled(data, father) {
       }
     }
   }
-  find(newData, null) ;
+  find(newData, null);
 
   return newData;
 }

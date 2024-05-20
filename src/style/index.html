@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<script>
+  const click = ()=>{
+    console.log('111')
+    alert('pp')
+  }
+</script>
+<body>
+  <button id="btn">你好</button>
+</body>
+
+<script>
+
+  function fn (a,b,c){
+    console.log(111111,a);
+    console.log(222223,b);
+    console.log(333333,c);
+    return a + b + c;
+  }
+
+  const a = fn.bind(null, 'a');
+
+  const btn = document.querySelector('#btn');
+
+
+
+  btn.addEventListener('click', function() {
+    a('c')
+  });
+
+
+</script>
+</html>

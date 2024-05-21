@@ -1,60 +1,66 @@
-import React, { useState, useRef,useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Select } from "antd";
 import { Tooltip, Tag } from "antd";
 import data from "./data.json";
 import SelectTree from "./SelectTree";
 import { addId } from "../utils.js";
-
-const { Option } = Select;
-
-const children = [];
-for (let i = 10; i < 36; i++) {
-  children.push(<Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>);
-}
+import "./Cascader.less";
 
 const init = ["abcd0"];
 
 const Cascader1 = () => {
+  const myRef = useRef(null);
   const [selected, setSeleced] = useState(init);
-
-  const myRef = React.createRef();
+  const [showSelect, setShowSelect] = useState(false);
 
   const handleChange = (value) => {
+    console.log("change", value, selected);
+
     setSeleced(value);
   };
 
   const deleteTag = (val) => () => {
+    console.log("delete", val, selected);
     setSeleced(selected.filter((select) => select !== val));
   };
 
-  const onBlur = () => {
-    // console.log("inputRef", inputRef);
-  };
-
-  const [showSelect, setShowSelect] = useState(false);
-
   const handleClickOutside = (event) => {
-    console.log('event',myRef);
-    // 检查事件是否发生在组件外
-    if (!myRef.current || !myRef.current.contains(event.target)) {
-      // 如果是在组件外部点击，执行需要的操作
-      console.log('Clicked outside the component!');
+    const input = document.querySelector(".ant-select-selection-overflow");
+    const inputContent = document.querySelector(
+      ".ant-select-selection-item-content"
+    );
+    const svg = document.querySelector("svg");
+
+    console.log("input", event.target, event.target === svg, svg);
+
+    if (
+      !myRef.current?.contains?.(event.target) &&
+      !(
+        event.target == input ||
+        event.target === inputContent ||
+        event.target === svg
+      )
+    ) {
+      // 点击弹窗外部
+      setShowSelect(false);
     }
   };
- 
 
   useEffect(() => {
     // 在组件挂载时添加事件监听器
-    document.addEventListener('click', handleClickOutside, true);
- 
+    document.addEventListener("click", handleClickOutside, true);
+
     return () => {
       // 在组件卸载时移除事件监听器
-      document.removeEventListener('click', handleClickOutside, true);
+      document.removeEventListener("click", handleClickOutside, true);
     };
   }, []);
 
   return (
-    <div className="select-tree-container"  style={{ marginTop: "50px", marginLeft: "50px" }}>
+    <div
+      className="select-tree-container"
+      style={{ marginTop: "50px", marginLeft: "50px" }}
+    >
       <Select
         mode="multiple"
         autoClearSearchValue={true}
@@ -95,13 +101,21 @@ const Cascader1 = () => {
         }}
       />
 
+      <br />
+
       {showSelect ? (
-        <SelectTree
-          ref={myRef}
-          data={addId(data.data, "abcd")}
-          value={selected}
-          onChange={setSeleced}
-        />
+        <div className="select-tree-warp" ref={myRef}>
+          <SelectTree
+            data={addId(data.data, "abcd")}
+            value={selected}
+            onChange={setSeleced}
+          />
+
+          <div style={{ border: "1px solid #ddd" }}>
+            <button type="">确定</button>
+            <button type=""> 取消</button>
+          </div>
+        </div>
       ) : null}
     </div>
   );

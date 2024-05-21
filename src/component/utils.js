@@ -101,3 +101,29 @@ export function setDisabled(data, father) {
 
   return newData;
 }
+
+
+// 手动删除
+export function setDelete(data, father) {
+  const newData = JSON.parse(JSON.stringify(data));
+  function find(nodes, father) {
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i];
+      if (node?.children?.length > 0) {
+        if (father) {
+          node.disabled = !father.checked;
+        }
+        find(node.children, node);
+      } else {
+        if (father) {
+          node.disabled = !father.checked;
+        }
+      }
+    }
+  }
+  find(newData, null);
+
+  return newData;
+}
+
+
